@@ -1,17 +1,20 @@
+-- Intllib
+local S = ipnames.intllib
+
 function ipnames.command_list(name)
 	local names = ""
 	for k, v in pairs(ipnames.whitelist) do
 		names = names.." "..k
 	end
-	minetest.chat_send_player(name, "All exceptions: "..names)
+	minetest.chat_send_player(name, S("All exceptions: @1", names))
 end
 
 function ipnames.command_whois(name, param)
 	if not ipnames.data[param] then
-		minetest.chat_send_player(name, "The player '"..param.."' did not join yet.")
+		minetest.chat_send_player(name, S("The player '@1' did not join yet.", param))
 		return
 	end
-	
+
 	local ip = ipnames.data[param][1]
 	local names = ""
 	for k, v in pairs(ipnames.data) do
@@ -19,28 +22,28 @@ function ipnames.command_whois(name, param)
 			names = names.." "..k
 		end
 	end
-	minetest.chat_send_player(name, "Following players share an IP: "..names)
+	minetest.chat_send_player(name, S("Following players share an IP: @1", names))
 end
 
 function ipnames.command_ignore(name, param)
 	if not ipnames.data[param] then
-		minetest.chat_send_player(name, "The player '"..param.."' did not join yet.")
+		minetest.chat_send_player(name, S("The player '@1' did not join yet.", param))
 		return
 	end
-	
+
 	ipnames.whitelist[param] = true
-	minetest.chat_send_player(name, "Added an exception!")
+	minetest.chat_send_player(name, S("Added an exception!"))
 	ipnames.save_whitelist()
 end
 
 function ipnames.command_unignore(name, param)
 	if not ipnames.whitelist[param] then
-		minetest.chat_send_player(name, "The player '"..param.."' is not on the whitelist.")
+		minetest.chat_send_player(name, S("The player '@1' is not on the whitelist.", param))
 		return
 	end
-	
+
 	ipnames.whitelist[param] = nil
-	minetest.chat_send_player(name, "Removed an exception!")
+	minetest.chat_send_player(name, S("Removed an exception!"))
 	ipnames.save_whitelist()
 end
 

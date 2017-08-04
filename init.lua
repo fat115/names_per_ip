@@ -1,6 +1,12 @@
 -- Created by Krock to stop mass-account-creators
 -- License: WTFPL
+
+-- Load support for intllib.
+local MP = minetest.get_modpath(minetest.get_current_modname())
+local S, NS = dofile(MP.."/intllib.lua")
+
 ipnames = {}
+ipnames.intllib = S
 ipnames.data = {}
 ipnames.tmp_data = {}
 ipnames.whitelist = {}
@@ -20,27 +26,27 @@ ipnames.save_interval = 240
 dofile(minetest.get_modpath("names_per_ip").."/functions.lua")
 
 minetest.register_chatcommand("ipnames", {
-	description = "Get the features of names_per_ip",
+	description = S("Get the features of names_per_ip"),
 	privs = {ban=true},
 	func = function(name, param)
 		if param == "" then
-			minetest.chat_send_player(name, "Available commands: ")
-			minetest.chat_send_player(name, "Get all accounts of <name>: /ipnames whois <name>")
-			minetest.chat_send_player(name, "List all exceptions:        /ipnames list")
-			minetest.chat_send_player(name, "Remove/add an exception:    /ipnames (un)ignore <name>")
+			minetest.chat_send_player(name, S("Available commands: "))
+			minetest.chat_send_player(name, S("Get all accounts of <name>: /ipnames whois <name>"))
+			minetest.chat_send_player(name, S("List all exceptions:        /ipnames list"))
+			minetest.chat_send_player(name, S("Remove/add an exception:    /ipnames (un)ignore <name>"))
 			return
 		end
 		if param == "list" then
 			ipnames.command_list(name)
 			return
 		end
-		
+
 		local args = param:split(" ")
 		if #args < 2 then
-			minetest.chat_send_player(name, "Error: Please check again '/ipnames' for correct usage.")
+			minetest.chat_send_player(name, S("Error: Please check again '/ipnames' for correct usage."))
 			return
 		end
-		
+
 		if args[1] == "whois" then
 			ipnames.command_whois(name, args[2])
 		elseif args[1] == "ignore" then
@@ -48,7 +54,7 @@ minetest.register_chatcommand("ipnames", {
 		elseif args[1] == "unignore" then
 			ipnames.command_unignore(name, args[2])
 		else
-			minetest.chat_send_player(name, "Error: No known argument for #1 '"..args[1].."'")
+			minetest.chat_send_player(name, S("Error: No known argument for #1 '")..args[1].."'")
 		end
 	end
 })
@@ -57,11 +63,11 @@ minetest.register_chatcommand("ipnames", {
 minetest.register_on_prejoinplayer(function(name, ip)
 	-- Only stop new accounts
 	ipnames.tmp_data[name] = ip
-	
+
 	if ipnames.data[name] then
 		return
 	end
-	
+
 	local count = 1
 	local names = ""
 	local limit_ext = false
@@ -78,7 +84,7 @@ minetest.register_on_prejoinplayer(function(name, ip)
 	-- Return error message if too many accounts have been created
 	if count > ipnames.name_per_ip_limit then
 		ipnames.tmp_data[name] = nil
-		return ("\nYou exceeded the limit of accounts.\nYou already own the following accounts:\n"..names)
+		return (S("\nYou exceeded the limit of accounts.\nYou already own the following accounts:\n")..names)
 	end
 end)
 
